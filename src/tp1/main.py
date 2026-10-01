@@ -2,21 +2,16 @@ from tp1.utils.capture import Capture
 from tp1.utils.config import logger
 from tp1.utils.report import Report
 
+import argparse
+import json
+from collections import Counter
+from scapy.all import PcapReader, ARP, TCP, UDP, ICMP
 
 def main():
-    logger.info("Starting TP1")
+    total = 0
+    for pkt in PcapReader("capture.pcap"):
+        total += 1
+        print ("nombres de paquets :", total)
 
-    capture = Capture()
-    capture.capture_traffic()
-    capture.analyse("tcp")
-    summary = capture.get_summary()
-
-    filename = "report.pdf"
-    report = Report(capture, filename, summary)
-    report.generate("graph")
-    report.generate("array")
-    report.save(filename)
-
-
-if __name__ == "__main__":
-    main()
+    if __name__ == "__main__":
+        main()
