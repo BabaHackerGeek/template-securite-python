@@ -34,16 +34,16 @@ def main():
                 ports_par_ip[pkt[IP].src].add(pkt[TCP].dport)
 
     logger.info("Nombre de paquets : %d", total)
-     logger.info("Protocoles : %s", dict(compteur))
+    logger.info("Protocoles : %s", dict(compteur))
 
     for ip, ports in ports_par_ip.items():
         if len(ports) >= 15:
             attaques.append({"type": "port_scan", "attacker": ip})
-             logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
+            logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
 
     rapport = {
         "protocols": dict(compteur),
-          "attacks":  attaques,
+        "attacks": attaques,
         "flag": flag,
     }
 
