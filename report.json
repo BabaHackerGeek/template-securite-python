@@ -5,6 +5,11 @@
     "ICMP": 16,
     "ARP": 20
   },
-  "attacks": [],
+  "attacks": [
+    {
+      "type": "port_scan",
+      "attacker": "192.168.6.66"
+    }
+  ],
   "flag": "ESGI{tp1_a2e0312bcb33}"
 }
