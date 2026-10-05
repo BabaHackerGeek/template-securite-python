@@ -25,5 +25,13 @@ def main():
     logger.info("Nombre de paquets : %d", total)
     logger.info("Protocoles : %s", dict(compteur))
 
+    rapport = {
+        "protocols": dict(compteur),
+        "attacks": [],
+        "flag": None,
+    }
+
+    with open("report.json", "w") as f:
+        json.dump(rapport, f, indent=2)
 if __name__ == "__main__":
     main()
