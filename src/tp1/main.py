@@ -9,9 +9,11 @@ from scapy.all import PcapReader, ARP, TCP, UDP, ICMP
 
 def main():
     total = 0
+
     for pkt in PcapReader("capture.pcap"):
         total += 1
-        print ("nombres de paquets :", total)
 
-    if __name__ == "__main__":
-        main()
+    logger.info("Nombre de paquets : %d", total)
+
+if __name__ == "__main__":
+       main()
