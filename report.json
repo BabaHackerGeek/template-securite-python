@@ -13,6 +13,10 @@
     {
       "type": "sql_injection",
       "attacker": "192.168.6.77"
+    },
+    {
+      "type": "arp_spoofing",
+      "attacker": "02:17:35:44:33:4e"
     }
   ],
   "flag": "ESGI{tp1_a2e0312bcb33}"

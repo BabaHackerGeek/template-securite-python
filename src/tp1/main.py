@@ -22,6 +22,8 @@ def main():
     ports_par_ip = defaultdict(set)
     attaques = []
     sqli = set()
+    arp_ips = defaultdict(set)
+    arp_reponses = Counter()
 
     for pkt in PcapReader(args.pcap):
         total += 1
@@ -43,6 +45,9 @@ def main():
         if pkt.haslayer(IP) and pkt.haslayer(TCP):
             if pkt[TCP].flags == "S":
                 ports_par_ip[pkt[IP].src].add(pkt[TCP].dport)
+        if pkt.haslayer(ARP) and pkt[ARP].op == 2:
+            arp_ips[pkt[ARP].psrc].add(pkt[ARP].hwsrc)
+            arp_reponses[pkt[ARP].hwsrc] += 1
 
     logger.info("Nombre de paquets : %d", total)
     logger.info("Protocoles : %s", dict(compteur))
@@ -51,9 +56,16 @@ def main():
         if len(ports) >= 15:
             attaques.append({"type": "port_scan", "attacker": ip})
             logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
+
     for ip in sqli:
         attaques.append({"type": "sql_injection", "attacker": ip})
         logger.warning("Injection SQL détectée depuis %s", ip)
+
+    for ip, macs in arp_ips.items():
+        if len(macs) > 1:
+            attaquant = max(macs, key=lambda m: arp_reponses[m])
+            attaques.append({"type": "arp_spoofing", "attacker": attaquant})
+            logger.warning("ARP spoofing détecté depuis %s (IP contestée : %s)", attaquant, ip)
 
     rapport = {
         "protocols": dict(compteur),
