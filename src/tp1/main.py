@@ -7,6 +7,9 @@ import json
 from collections import Counter, defaultdict
 from scapy.all import PcapReader, ARP, TCP, UDP, ICMP, Raw, IP
 import re
+from urllib.parse import unquote
+
+SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.I)
 
 def main():
     total = 0
@@ -14,6 +17,7 @@ def main():
     compteur = Counter()
     ports_par_ip = defaultdict(set)
     attaques = []
+    sqli = set()
 
     for pkt in PcapReader("capture.pcap"):
         total += 1
@@ -29,6 +33,9 @@ def main():
             trouve = re.search(rb"ESGI\{[^}]+\}", pkt[Raw].load)
             if trouve:
                 flag = trouve.group().decode()
+            texte = unquote(pkt[Raw].load.decode(errors="ignore"))
+            if SQLI.search(texte) and pkt.haslayer(IP):
+                sqli.add(pkt[IP].src)
         if pkt.haslayer(IP) and pkt.haslayer(TCP):
             if pkt[TCP].flags == "S":
                 ports_par_ip[pkt[IP].src].add(pkt[TCP].dport)
@@ -40,6 +47,9 @@ def main():
         if len(ports) >= 15:
             attaques.append({"type": "port_scan", "attacker": ip})
             logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
+    for ip in sqli:
+        attaques.append({"type": "sql_injection", "attacker": ip})
+        logger.warning("Injection SQL détectée depuis %s", ip)
 
     rapport = {
         "protocols": dict(compteur),
