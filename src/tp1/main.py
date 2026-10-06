@@ -24,6 +24,7 @@ def main():
     sqli = set()
     arp_ips = defaultdict(set)
     arp_reponses = Counter()
+    flags_par_ip = defaultdict(list)
 
     for pkt in PcapReader(args.pcap):
         total += 1
@@ -36,9 +37,9 @@ def main():
         elif pkt.haslayer(ICMP):
             compteur["ICMP"] += 1
         if pkt.haslayer(Raw):
-            trouve = re.search(rb"ESGI\{[^}]+\}", pkt[Raw].load)
-            if trouve:
-                flag = trouve.group().decode()
+            for m in re.finditer(rb"ESGI\{[^}]+\}", pkt[Raw].load):
+                if pkt.haslayer(IP):
+                    flags_par_ip[pkt[IP].src].append(m.group().decode())
             texte = unquote(pkt[Raw].load.decode(errors="ignore"))
             if SQLI.search(texte) and pkt.haslayer(IP):
                 sqli.add(pkt[IP].src)
@@ -58,8 +59,8 @@ def main():
             logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
 
     for ip in sqli:
-        attaques.append({"type": "sql_injection", "attacker": ip})
-        logger.warning("Injection SQL détectée depuis %s", ip)
+        if flags_par_ip[ip]:
+            flag = flags_par_ip[ip][0]
 
     for ip, macs in arp_ips.items():
         if len(macs) > 1:
