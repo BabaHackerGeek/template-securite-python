@@ -59,6 +59,8 @@ def main():
             logger.warning("Scan de ports détecté depuis %s (%d ports)", ip, len(ports))
 
     for ip in sqli:
+        attaques.append({"type": "sql_injection", "attacker": ip})
+        logger.warning("Injection SQL détectée depuis %s", ip)
         if flags_par_ip[ip]:
             flag = flags_par_ip[ip][0]
 
