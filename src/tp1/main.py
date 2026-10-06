@@ -12,6 +12,10 @@ from urllib.parse import unquote
 SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.I)
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pcap")
+    parser.add_argument("--out", default="report.json")
+    args = parser.parse_args()
     total = 0
     flag = None
     compteur = Counter()
@@ -19,7 +23,7 @@ def main():
     attaques = []
     sqli = set()
 
-    for pkt in PcapReader("capture.pcap"):
+    for pkt in PcapReader(args.pcap):
         total += 1
         if pkt.haslayer(ARP):
             compteur["ARP"] += 1
@@ -57,7 +61,7 @@ def main():
         "flag": flag,
     }
 
-    with open("report.json", "w") as f:
+    with open(args.out, "w") as f:
         json.dump(rapport, f, indent=2)
 
 
