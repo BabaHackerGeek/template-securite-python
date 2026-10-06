@@ -5,7 +5,7 @@ from tp1.utils.report import Report
 import argparse
 import json
 from collections import Counter, defaultdict
-from scapy.all import PcapReader, ARP, TCP, UDP, ICMP, Raw, IP
+from scapy.all import PcapReader, ARP, TCP, UDP, ICMP, Raw, IP, Ether, DNS
 import re
 from urllib.parse import unquote
 
@@ -28,19 +28,27 @@ def main():
 
     for pkt in PcapReader(args.pcap):
         total += 1
+        if pkt.haslayer(Ether):
+            compteur["Ethernet"] += 1
         if pkt.haslayer(ARP):
             compteur["ARP"] += 1
-        elif pkt.haslayer(TCP):
+        if pkt.haslayer(IP):
+            compteur["IP"] += 1
+        if pkt.haslayer(TCP):
             compteur["TCP"] += 1
-        elif pkt.haslayer(UDP):
+        if pkt.haslayer(UDP):
             compteur["UDP"] += 1
-        elif pkt.haslayer(ICMP):
+        if pkt.haslayer(ICMP):
             compteur["ICMP"] += 1
+        if pkt.haslayer(DNS):
+            compteur["DNS"] += 1
         if pkt.haslayer(Raw):
             for m in re.finditer(rb"ESGI\{[^}]+\}", pkt[Raw].load):
                 if pkt.haslayer(IP):
                     flags_par_ip[pkt[IP].src].append(m.group().decode())
             texte = unquote(pkt[Raw].load.decode(errors="ignore"))
+            if pkt[Raw].load.startswith((b"GET ", b"POST ", b"PUT ", b"HEAD ", b"HTTP/")):
+                compteur["HTTP"] += 1
             if SQLI.search(texte) and pkt.haslayer(IP):
                 sqli.add(pkt[IP].src)
         if pkt.haslayer(IP) and pkt.haslayer(TCP):

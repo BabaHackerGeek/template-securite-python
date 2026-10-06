@@ -1,14 +1,22 @@
 {
   "protocols": {
+    "Ethernet": 143,
+    "IP": 123,
     "TCP": 95,
     "UDP": 12,
+    "DNS": 12,
     "ICMP": 16,
+    "HTTP": 13,
     "ARP": 20
   },
   "attacks": [
     {
       "type": "port_scan",
       "attacker": "192.168.6.66"
+    },
+    {
+      "type": "sql_injection",
+      "attacker": "192.168.6.77"
     },
     {
       "type": "arp_spoofing",
