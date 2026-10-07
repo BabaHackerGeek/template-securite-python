@@ -13,7 +13,7 @@ SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.I)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--pcap")
+    parser.add_argument("--pcap", required=True)
     parser.add_argument("--out", default="report.json")
     args = parser.parse_args()
     total = 0
