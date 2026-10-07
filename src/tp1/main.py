@@ -10,11 +10,7 @@ from tp1.utils.config import logger
 
 SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.IGNORECASE)
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--pcap", required=True)
-    parser.add_argument("--out", default="report.json")
-    args = parser.parse_args()
+def analyser(chemin):
     total = 0
     flag = None
     compteur = Counter()
@@ -25,7 +21,7 @@ def main():
     arp_reponses = Counter()
     flags_par_ip = defaultdict(list)
 
-    for pkt in PcapReader(args.pcap):
+    for pkt in PcapReader(chemin):
         total += 1
         if pkt.haslayer(Ether):
             compteur["Ethernet"] += 1
@@ -82,9 +78,19 @@ def main():
         "flag": flag,
     }
 
+    return rapport
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pcap", required=True)
+    parser.add_argument("--out", default="report.json")
+    args = parser.parse_args()
+
+    rapport = analyser(args.pcap)
+
     with open(args.out, "w") as f:
         json.dump(rapport, f, indent=2)
-
 
 if __name__ == "__main__":
     main()
