@@ -1,15 +1,14 @@
-from tp1.utils.capture import Capture
-from tp1.utils.config import logger
-from tp1.utils.report import Report
-
 import argparse
 import json
-from collections import Counter, defaultdict
-from scapy.all import PcapReader, ARP, TCP, UDP, ICMP, Raw, IP, Ether, DNS
 import re
+from collections import Counter, defaultdict
 from urllib.parse import unquote
 
-SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.I)
+from scapy.all import ARP, DNS, ICMP, IP, TCP, UDP, Ether, PcapReader, Raw
+
+from tp1.utils.config import logger
+
+SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.IGNORECASE)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -51,9 +50,8 @@ def main():
                 compteur["HTTP"] += 1
             if SQLI.search(texte) and pkt.haslayer(IP):
                 sqli.add(pkt[IP].src)
-        if pkt.haslayer(IP) and pkt.haslayer(TCP):
-            if pkt[TCP].flags == "S":
-                ports_par_ip[pkt[IP].src].add(pkt[TCP].dport)
+        if pkt.haslayer(IP) and pkt.haslayer(TCP) and pkt[TCP].flags == "S":
+            ports_par_ip[pkt[IP].src].add(pkt[TCP].dport)
         if pkt.haslayer(ARP) and pkt[ARP].op == 2:
             arp_ips[pkt[ARP].psrc].add(pkt[ARP].hwsrc)
             arp_reponses[pkt[ARP].hwsrc] += 1
