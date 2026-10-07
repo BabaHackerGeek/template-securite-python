@@ -1,3 +1,5 @@
+from fpdf import FPDF
+
 from tp1.utils.capture import Capture
 
 
@@ -12,7 +14,7 @@ class Report:
 
     def concat_report(self) -> str:
         """
-        Concat all data in report
+        Assemble toutes les données en un report
         """
         content = ""
         content += self.title
@@ -24,7 +26,7 @@ class Report:
 
     def save(self, filename: str) -> None:
         """
-        Save report in a file
+        Sauvegarde le report en un fichier
         :param filename:
         :return:
         """
@@ -34,7 +36,7 @@ class Report:
 
     def generate(self, param: str) -> None:
         """
-        Generate graph and array
+        Permet de générer un graphique + un tableau
         """
         if param == "graph":
             # TODO: generate graph
@@ -44,3 +46,32 @@ class Report:
             # TODO: generate array
             array = ""
             self.array = array
+
+
+def generer_pdf(protocoles: dict, chemin: str) -> None:
+    """Cette fonction dessine un PDF avec un graphique "en barres" des paquets par protocole."""
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=14)
+    pdf.cell(0, 10, "Rapport TP1 : paquets par protocole", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", size=10)
+
+    maximum = max(protocoles.values(), default=0) or 1
+    pdf.set_fill_color(70, 130, 180)
+    for nom, nombre in protocoles.items():
+        largeur = 120 * nombre / maximum
+        pdf.cell(30, 8, nom)
+        pdf.cell(largeur, 8, "", fill=True)
+        pdf.cell(0, 8, f" {nombre}", new_x="LMARGIN", new_y="NEXT")
+
+    """Cette fonction dessine un tableau des paquets par protocole."""
+    pdf.ln(8)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.cell(60, 8, "Protocole", border=1)
+    pdf.cell(40, 8, "Paquets", border=1, new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", size=10)
+    for nom, nombre in protocoles.items():
+        pdf.cell(60, 8, nom, border=1)
+        pdf.cell(40, 8, str(nombre), border=1, new_x="LMARGIN", new_y="NEXT")
+
+    pdf.output(chemin)
