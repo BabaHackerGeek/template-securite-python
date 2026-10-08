@@ -1,3 +1,4 @@
+from fpdf import FPDF
 from tp1.utils.capture import Capture
 
 
@@ -34,3 +35,18 @@ class Report:
         elif param == "array":
             array = ""
             self.array = array
+
+    def generer_pdf(protocoles: dict, chemin: str) -> None:
+        pdf = FPDF()
+        pdf.add_page()
+
+        pdf.set_font("Helvetica", size=14)
+        pdf.cell(
+            0,
+            10,
+            "Rapport TP1 : paquets par protocole",
+            new_x="LMARGIN",
+            new_y="NEXT",
+        )
+
+        pdf.output(chemin)
