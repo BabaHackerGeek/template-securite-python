@@ -67,5 +67,30 @@ def generer_pdf(protocoles: dict, chemin: str) -> None:
             new_x="LMARGIN",
             new_y="NEXT",
             )
+    pdf.ln(8)
+
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.cell(60, 8, "Protocole", border=1)
+    pdf.cell(
+        40,
+        8,
+        "Paquets",
+        border=1,
+        new_x="LMARGIN",
+        new_y="NEXT",
+    )
+
+    pdf.set_font("Helvetica", size=10)
+
+    for nom, nombre in protocoles.items():
+        pdf.cell(60, 8, nom, border=1)
+        pdf.cell(
+            40,
+            8,
+            str(nombre),
+            border=1,
+            new_x="LMARGIN",
+            new_y="NEXT",
+        )
 
     pdf.output(chemin)
