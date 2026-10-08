@@ -7,6 +7,7 @@ from urllib.parse import unquote
 from scapy.all import ARP, DNS, ICMP, IP, TCP, UDP, Ether, PcapReader, Raw
 
 from tp1.utils.config import logger
+from tp1.utils.report import generer_pdf
 
 SQLI = re.compile(r"'\s*or\s+1=1|union\s+select|sleep\(", re.IGNORECASE)
 
@@ -92,6 +93,7 @@ def main():
     with open(args.out, "w") as f:
         json.dump(rapport, f, indent=2)
 
+    generer_pdf(rapport["protocols"], "report.pdf")
 
 if __name__ == "__main__":
     main()

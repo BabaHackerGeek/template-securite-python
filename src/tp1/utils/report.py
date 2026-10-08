@@ -1,4 +1,5 @@
 from fpdf import FPDF
+
 from tp1.utils.capture import Capture
 
 
@@ -36,17 +37,35 @@ class Report:
             array = ""
             self.array = array
 
-    def generer_pdf(protocoles: dict, chemin: str) -> None:
-        pdf = FPDF()
-        pdf.add_page()
+def generer_pdf(protocoles: dict, chemin: str) -> None:
+    pdf = FPDF()
+    pdf.add_page()
 
-        pdf.set_font("Helvetica", size=14)
-        pdf.cell(
-            0,
-            10,
-            "Rapport TP1 : paquets par protocole",
-            new_x="LMARGIN",
-            new_y="NEXT",
+    pdf.set_font("Helvetica", size=14)
+    pdf.cell(
+        0,
+        10,
+        "Rapport TP1 : paquets par protocole",
+        new_x="LMARGIN",
+        new_y="NEXT",
         )
 
-        pdf.output(chemin)
+    pdf.set_font("Helvetica", size=10)
+
+    maximum = max(protocoles.values(), default=0) or 1
+    pdf.set_fill_color(70, 130, 180)
+
+    for nom, nombre in protocoles.items():
+        largeur = 120 * nombre / maximum
+
+        pdf.cell(30, 8, nom)
+        pdf.cell(largeur, 8, "", fill=True)
+        pdf.cell(
+            0,
+            8,
+            f" {nombre}",
+            new_x="LMARGIN",
+            new_y="NEXT",
+            )
+
+    pdf.output(chemin)
