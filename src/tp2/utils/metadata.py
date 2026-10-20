@@ -2,6 +2,8 @@ import hashlib
 import math
 from collections import Counter
 
+import magic
+
 
 def entropy(data: bytes) -> float:
     """Entropie de Shannon d'un contenu (0 à 8), je me base sur slide 42 du cours."""
@@ -18,4 +20,5 @@ def get_file_metadata(data: bytes) -> dict:
         "md5": hashlib.md5(data).hexdigest(),
         "size": len(data),
         "entropy": entropy(data),
+        "file_type": magic.from_buffer(data),
     }

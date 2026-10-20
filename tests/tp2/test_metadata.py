@@ -10,7 +10,7 @@ def test_get_file_metadata():
     assert resultat["md5"] == "900150983cd24fb0d6963f7d28e17f72"
     assert resultat["size"] == 3
     assert resultat["entropy"] == pytest.approx(1.584962500721156)
-
+    assert "text" in resultat["file_type"].lower()
 
 def test_entropy():
     assert entropy(b"") == 0.0
