@@ -58,3 +58,9 @@ def test_extract_domains_dedoublonne():
     texte = "c2.example.test puis C2.Example.test et evil.example.org"
 
     assert extract_domains(texte) == ["c2.example.test", "evil.example.org"]
+
+
+def test_extract_domains_ignore_les_noms_de_fichiers():
+    texte = "http://c2.example.test/gate.php puis config.ini et setup.exe"
+
+    assert extract_domains(texte) == ["c2.example.test"]
