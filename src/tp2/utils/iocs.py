@@ -5,6 +5,7 @@ URL = re.compile(r"https?://[^\s\"']+")
 IPV4 = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
 DOMAIN = re.compile(r"\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b", re.IGNORECASE)
 EXTENSIONS_FICHIERS = {"php", "ini", "exe", "dll", "bin", "txt", "html", "js", "py", "sh", "bat", "log"}
+MUTEX = re.compile(r"\b(?:Global|Local)\\[\w-]+")
 
 def extract_urls(text: str) -> list:
     """Ca renvoie les URLs trouvées dans un texte en enlevantt la ponctuation finale"""
@@ -22,6 +23,11 @@ def extract_domains(text: str) -> list:
     """fonction qui renvoie les noms de domaine trouvés dans un texte sans les noms de fichiers"""
     domaines = {domaine.lower() for domaine in DOMAIN.findall(text)}
     return sorted(d for d in domaines if d.rsplit(".", 1)[-1] not in EXTENSIONS_FICHIERS)
+
+
+def extract_mutex(text: str) -> list:
+    """Renvoie les noms de mutex (Global\\nom ou Local\\nom) trouvés dans un texte."""
+    return sorted(set(MUTEX.findall(text)))
 
 
 def est_ipv4_valide(adresse: str) -> bool:

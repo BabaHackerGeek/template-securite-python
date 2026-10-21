@@ -2,6 +2,7 @@ from src.tp2.utils.iocs import (
     est_ipv4_valide,
     extract_domains,
     extract_ips,
+    extract_mutex,
     extract_urls,
 )
 
@@ -64,3 +65,9 @@ def test_extract_domains_ignore_les_noms_de_fichiers():
     texte = "http://c2.example.test/gate.php puis config.ini et setup.exe"
 
     assert extract_domains(texte) == ["c2.example.test"]
+
+
+def test_extract_mutex_dedoublonne():
+    texte = r"CreateMutexA Global\abc123 puis Global\abc123 et Local\xyz"
+
+    assert extract_mutex(texte) == ["Global\\abc123", "Local\\xyz"]
