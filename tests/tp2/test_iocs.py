@@ -1,4 +1,4 @@
-from src.tp2.utils.iocs import extract_ips, extract_urls
+from src.tp2.utils.iocs import est_ipv4_valide, extract_ips, extract_urls
 
 
 def test_extract_urls_dedoublonne():
@@ -36,3 +36,14 @@ def test_extract_ips_dedoublonne():
     texte = "serveur 185.10.20.30 puis 185.10.20.30 et 10.0.0.1"
 
     assert extract_ips(texte) == ["10.0.0.1", "185.10.20.30"]
+
+
+def test_extract_ips_ignore_les_adresses_invalides():
+    texte = "adresse 999.1.1.1 puis 10.0.0.1"
+
+    assert extract_ips(texte) == ["10.0.0.1"]
+
+
+def test_est_ipv4_valide():
+    assert est_ipv4_valide("185.10.20.30")
+    assert not est_ipv4_valide("999.1.1.1")
