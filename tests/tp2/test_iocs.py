@@ -1,4 +1,9 @@
-from src.tp2.utils.iocs import est_ipv4_valide, extract_ips, extract_urls
+from src.tp2.utils.iocs import (
+    est_ipv4_valide,
+    extract_domains,
+    extract_ips,
+    extract_urls,
+)
 
 
 def test_extract_urls_dedoublonne():
@@ -47,3 +52,9 @@ def test_extract_ips_ignore_les_adresses_invalides():
 def test_est_ipv4_valide():
     assert est_ipv4_valide("185.10.20.30")
     assert not est_ipv4_valide("999.1.1.1")
+
+
+def test_extract_domains_dedoublonne():
+    texte = "c2.example.test puis C2.Example.test et evil.example.org"
+
+    assert extract_domains(texte) == ["c2.example.test", "evil.example.org"]
