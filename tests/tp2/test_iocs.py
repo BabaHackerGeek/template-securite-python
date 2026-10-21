@@ -21,3 +21,12 @@ def test_extract_urls_http_et_https():
     texte = "http://a.example.test et https://b.example.test/x"
 
     assert extract_urls(texte) == ["http://a.example.test", "https://b.example.test/x"]
+
+
+def test_extract_urls_ponctuation_finale():
+    texte = "voir http://c2.example.test/gate.php. puis (https://b.example.test/x), fin"
+
+    assert extract_urls(texte) == [
+        "http://c2.example.test/gate.php",
+        "https://b.example.test/x",
+    ]
