@@ -1,4 +1,4 @@
-from src.tp2.utils.iocs import extract_urls
+from src.tp2.utils.iocs import extract_ips, extract_urls
 
 
 def test_extract_urls_dedoublonne():
@@ -30,3 +30,9 @@ def test_extract_urls_ponctuation_finale():
         "http://c2.example.test/gate.php",
         "https://b.example.test/x",
     ]
+
+
+def test_extract_ips_dedoublonne():
+    texte = "serveur 185.10.20.30 puis 185.10.20.30 et 10.0.0.1"
+
+    assert extract_ips(texte) == ["10.0.0.1", "185.10.20.30"]
