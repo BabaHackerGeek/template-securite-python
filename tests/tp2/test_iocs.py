@@ -15,3 +15,9 @@ def test_extract_urls_dedoublonne():
 
 def test_extract_urls_sans_url():
     assert extract_urls("rien d'intéressant ici") == []
+
+
+def test_extract_urls_http_et_https():
+    texte = "http://a.example.test et https://b.example.test/x"
+
+    assert extract_urls(texte) == ["http://a.example.test", "https://b.example.test/x"]
