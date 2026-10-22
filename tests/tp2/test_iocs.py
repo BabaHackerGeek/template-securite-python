@@ -1,6 +1,7 @@
 from src.tp2.utils.iocs import (
     est_ipv4_valide,
     extract_domains,
+    extract_iocs,
     extract_ips,
     extract_mutex,
     extract_paths,
@@ -85,3 +86,20 @@ def test_extract_paths_ignore_les_urls():
     texte = r"copie vers C:\Users\Public\svc.exe et /tmp/payload.bin puis http://c2.example.test/gate.php"
 
     assert extract_paths(texte) == ["/tmp/payload.bin", r"C:\Users\Public\svc.exe"]
+
+
+def test_extract_iocs():
+    # Given : un contenu binaire avec un exemple de chaque IOC
+    data = rb"GET http://c2.example.test/gate.php ip 185.10.20.30 Global\abc123 HKCU\Software\Run\svc"
+
+    # When : on extrait tous les IOC
+    resultat = extract_iocs(data)
+
+    # Then : chaque catégorie contient ce qu'on attend
+    assert resultat == {
+        "domains": ["c2.example.test"],
+        "ips": ["185.10.20.30"],
+        "urls": ["http://c2.example.test/gate.php"],
+        "mutex": [r"Global\abc123"],
+        "registry": [r"HKCU\Software\Run\svc"],
+    }

@@ -50,3 +50,15 @@ def est_ipv4_valide(adresse: str) -> bool:
     except ValueError:
         return False
     return True
+
+
+def extract_iocs(data: bytes) -> dict:
+    """la fonction extrait tous les IOC d'un contenu binaire, rangés par catégorie."""
+    texte = data.decode("latin-1")
+    return {
+        "domains": extract_domains(texte),
+        "ips": extract_ips(texte),
+        "urls": extract_urls(texte),
+        "mutex": extract_mutex(texte),
+        "registry": extract_registry(texte),
+    }
