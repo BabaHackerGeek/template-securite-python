@@ -3,6 +3,7 @@ from src.tp2.utils.iocs import (
     extract_domains,
     extract_ips,
     extract_mutex,
+    extract_paths,
     extract_registry,
     extract_urls,
 )
@@ -78,3 +79,9 @@ def test_extract_registry_dedoublonne():
     texte = r"RegSetValueEx HKCU\Software\Run\svc puis HKCU\Software\Run\svc et HKLM\System\Foo"
 
     assert extract_registry(texte) == [r"HKCU\Software\Run\svc", r"HKLM\System\Foo"]
+
+
+def test_extract_paths_ignore_les_urls():
+    texte = r"copie vers C:\Users\Public\svc.exe et /tmp/payload.bin puis http://c2.example.test/gate.php"
+
+    assert extract_paths(texte) == ["/tmp/payload.bin", r"C:\Users\Public\svc.exe"]
