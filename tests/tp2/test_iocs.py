@@ -3,6 +3,7 @@ from src.tp2.utils.iocs import (
     extract_domains,
     extract_ips,
     extract_mutex,
+    extract_registry,
     extract_urls,
 )
 
@@ -71,3 +72,9 @@ def test_extract_mutex_dedoublonne():
     texte = r"CreateMutexA Global\abc123 puis Global\abc123 et Local\xyz"
 
     assert extract_mutex(texte) == ["Global\\abc123", "Local\\xyz"]
+
+
+def test_extract_registry_dedoublonne():
+    texte = r"RegSetValueEx HKCU\Software\Run\svc puis HKCU\Software\Run\svc et HKLM\System\Foo"
+
+    assert extract_registry(texte) == [r"HKCU\Software\Run\svc", r"HKLM\System\Foo"]
