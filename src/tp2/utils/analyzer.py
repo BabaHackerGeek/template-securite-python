@@ -1,7 +1,7 @@
 import os
 
 from tp2.utils.config import logger
-from tp2.utils.iocs import extract_iocs
+from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
 from tp2.utils.report import write_report
 
@@ -18,7 +18,7 @@ def analyze_sample(path: str) -> dict:
     rapport["mitre_attack"] = []
     rapport["llm_summary"] = ""
     rapport["score"] = 0
-    rapport["flag"] = None
+    rapport["flag"] = extract_flag(data.decode("latin-1"))
     return rapport
 
 

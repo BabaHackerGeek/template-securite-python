@@ -8,6 +8,8 @@ EXTENSIONS_FICHIERS = {"php", "ini", "exe", "dll", "bin", "txt", "html", "js", "
 MUTEX = re.compile(r"\b(?:Global|Local)\\[\w-]+")
 REGISTRY = re.compile(r"\b(?:HKEY_[A-Z_]+|HKCU|HKLM|HKCR|HKU|HKCC)(?:\\[\w.-]+)+")
 PATH = re.compile(r"\b[A-Za-z]:\\(?:[\w.-]+\\)*[\w.-]+|(?<![\w:/.])/(?:[\w.-]+/)+[\w.-]+")
+FLAG = re.compile(r"ESGI\{[^}]+\}")
+
 
 def extract_urls(text: str) -> list:
     """Ca renvoie les URLs trouvées dans un texte en enlevantt la ponctuation finale"""
@@ -62,3 +64,14 @@ def extract_iocs(data: bytes) -> dict:
         "mutex": extract_mutex(texte),
         "registry": extract_registry(texte),
     }
+
+
+def extract_flag(text: str):
+    """renvoie le premier flag avec ESGI{...} sans prendre en compte les lignes qui ressemblent à une injection"""
+    for ligne in re.split(r"[\x00\r\n]+", text):
+        if "ignore previous instructions" in ligne.lower():
+            continue
+        trouve = FLAG.search(ligne)
+        if trouve:
+            return trouve.group()
+    return None
