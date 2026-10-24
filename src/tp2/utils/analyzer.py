@@ -3,7 +3,7 @@ import os
 from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
-from tp2.utils.report import write_report
+from tp2.utils.report import write_report, write_triage
 
 
 def analyze_sample(path: str) -> dict:
@@ -29,6 +29,8 @@ def process_samples(samples_dir: str, out_dir: str) -> list:
         path = os.path.join(samples_dir, nom)
         if not os.path.isfile(path):
             continue
-        chemins.append(write_report(analyze_sample(path), out_dir))
+        rapport = analyze_sample(path)
+        chemins.append(write_report(rapport, out_dir))
+        write_triage(rapport, out_dir, nom)
         logger.info("Analysé : %s", nom)
     return chemins

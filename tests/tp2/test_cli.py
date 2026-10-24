@@ -13,4 +13,4 @@ def test_main(tmp_path, monkeypatch):
 
     main()
 
-    assert len(list(out.iterdir())) == 1
+    assert len(list(out.glob("*.json"))) == 2
