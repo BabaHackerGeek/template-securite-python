@@ -115,3 +115,12 @@ def test_extract_flag_ignore_la_ligne_piege():
 
     assert extract_flag(texte) == "ESGI{vrai_123}"
     assert extract_flag("rien ici") is None
+
+
+def test_extract_iocs_separe_les_chaines_binaires():
+    data = b"http://c2.example.test/gate.php\x00Global\\abc123\x00HKCU\\Software\\Run\\svc\x00"
+
+    resultat = extract_iocs(data)
+
+    assert resultat["urls"] == ["http://c2.example.test/gate.php"]
+    assert resultat["mutex"] == ["Global\\abc123"]

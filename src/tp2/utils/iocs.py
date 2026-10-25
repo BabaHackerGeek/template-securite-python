@@ -9,6 +9,7 @@ MUTEX = re.compile(r"\b(?:Global|Local)\\[\w-]+")
 REGISTRY = re.compile(r"\b(?:HKEY_[A-Z_]+|HKCU|HKLM|HKCR|HKU|HKCC)(?:\\[\w.-]+)+")
 PATH = re.compile(r"\b[A-Za-z]:\\(?:[\w.-]+\\)*[\w.-]+|(?<![\w:/.])/(?:[\w.-]+/)+[\w.-]+")
 FLAG = re.compile(r"ESGI\{[^}]+\}")
+DOMAINES_BRUIT = ("gnu.org", "translationproject.org", "gnu.hash", "libc.so", "plt.got")
 
 
 def extract_urls(text: str) -> list:
@@ -55,14 +56,15 @@ def est_ipv4_valide(adresse: str) -> bool:
 
 
 def extract_iocs(data: bytes) -> dict:
-    """la fonction extrait tous les IOC d'un contenu binaire, rangés par catégorie."""
+    """extrait tous les IOC d'un contenu binaire rangés par catégorie"""
     texte = data.decode("latin-1")
+    segments = "\n".join(re.split(r"[\x00-\x08\x0b-\x1f\x7f-\xff]+", texte))
     return {
-        "domains": extract_domains(texte),
-        "ips": extract_ips(texte),
-        "urls": extract_urls(texte),
-        "mutex": extract_mutex(texte),
-        "registry": extract_registry(texte),
+        "domains": extract_domains(segments),
+        "ips": extract_ips(segments),
+        "urls": extract_urls(segments),
+        "mutex": extract_mutex(segments),
+        "registry": extract_registry(segments),
     }
 
 
