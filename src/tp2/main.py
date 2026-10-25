@@ -12,7 +12,7 @@ def main():
     args = parser.parse_args()
 
     logger.info("Samples : %s, rules : %s, out : %s", args.samples, args.rules, args.out)
-    chemins = process_samples(args.samples, args.out)
+    chemins = process_samples(args.samples, args.rules, args.out)
     logger.info("%d rapport(s) écrit(s) dans %s", len(chemins), args.out)
 
 

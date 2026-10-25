@@ -4,16 +4,17 @@ from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
 from tp2.utils.report import write_report, write_triage
+from tp2.utils.yara_scan import yara_scan
 
 
-def analyze_sample(path: str) -> dict:
+def analyze_sample(path: str, rules_dir: str) -> dict:
     """permet d'analysez un fichier et renvoie le rapport au format attendu"""
     with open(path, "rb") as f:
         data = f.read()
     rapport = get_file_metadata(data)
     rapport["iocs"] = extract_iocs(data)
     rapport["imports"] = []
-    rapport["yara_matches"] = []
+    rapport["yara_matches"] = yara_scan(data, rules_dir)
     rapport["family_guess"] = "unknown"
     rapport["mitre_attack"] = []
     rapport["llm_summary"] = ""
@@ -22,14 +23,14 @@ def analyze_sample(path: str) -> dict:
     return rapport
 
 
-def process_samples(samples_dir: str, out_dir: str) -> list:
+def process_samples(samples_dir: str, rules_dir: str, out_dir: str) -> list:
     """analyse chaque fichier du dossier et écrit un JSON par échantillon"""
     chemins = []
     for nom in sorted(os.listdir(samples_dir)):
         path = os.path.join(samples_dir, nom)
         if not os.path.isfile(path):
             continue
-        rapport = analyze_sample(path)
+        rapport = analyze_sample(path, rules_dir)
         chemins.append(write_report(rapport, out_dir))
         write_triage(rapport, out_dir, nom)
         logger.info("Analysé : %s", nom)
