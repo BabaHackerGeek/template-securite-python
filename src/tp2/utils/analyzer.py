@@ -1,5 +1,6 @@
 import os
 
+from tp2.utils.binary import parse_binary
 from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
@@ -13,7 +14,7 @@ def analyze_sample(path: str, rules_dir: str) -> dict:
         data = f.read()
     rapport = get_file_metadata(data)
     rapport["iocs"] = extract_iocs(data)
-    rapport["imports"] = []
+    rapport["imports"] = parse_binary(path)["imports"]
     rapport["yara_matches"] = yara_scan(data, rules_dir)
     rapport["family_guess"] = "unknown"
     rapport["mitre_attack"] = []
