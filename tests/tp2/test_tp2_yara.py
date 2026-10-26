@@ -21,3 +21,18 @@ def test_yara_scan_sans_regle(tmp_path):
     regles.mkdir()
 
     assert yara_scan(b"rien", str(regles)) == []
+
+
+def test_yara_scan_regles_perso(tmp_path):
+    regles = tmp_path / "rules"
+    regles.mkdir()
+    data = rb"HKCU\Software\Microsoft\Windows\CurrentVersion\Run\svc" + b"\x00GetAsyncKeyState"
+
+    resultat = yara_scan(data, str(regles))
+
+    assert "Persistence_Run_Key" in resultat
+    assert "Keylogger_Hooks" in resultat
+
+
+def test_yara_scan_dossier_inexistant():
+    assert yara_scan(b"rien", "/dossier/qui/nexiste/pas") == []
