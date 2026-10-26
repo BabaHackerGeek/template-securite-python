@@ -21,7 +21,7 @@ rule Keylogger_Hooks {
 
 
 def yara_scan(data: bytes, rules_dir: str) -> list:
-    """Compile mes règles et celles du dossier, et renvoie les noms des règles qui correspondent."""
+    """ca permet de compiler mes règles et celles du dossier et renvoie ensuite les noms des règles qui correspondent"""
     sources = {"_perso": REGLES_PERSO}
     if os.path.isdir(rules_dir):
         for nom in sorted(os.listdir(rules_dir)):

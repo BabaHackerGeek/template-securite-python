@@ -5,21 +5,20 @@ from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
 from tp2.utils.report import write_report, write_triage
+from tp2.utils.triage import heuristic_triage
 from tp2.utils.yara_scan import yara_scan
 
 
 def analyze_sample(path: str, rules_dir: str) -> dict:
-    """permet d'analysez un fichier et renvoie le rapport au format attendu"""
+    """permet d'analyser un fichier et renvoie le rapport au format attendu"""
     with open(path, "rb") as f:
         data = f.read()
     rapport = get_file_metadata(data)
     rapport["iocs"] = extract_iocs(data)
     rapport["imports"] = parse_binary(path)["imports"]
     rapport["yara_matches"] = yara_scan(data, rules_dir)
-    rapport["family_guess"] = "unknown"
-    rapport["mitre_attack"] = []
+    rapport.update(heuristic_triage(rapport))
     rapport["llm_summary"] = ""
-    rapport["score"] = 0
     rapport["flag"] = extract_flag(data.decode("latin-1"))
     return rapport
 
