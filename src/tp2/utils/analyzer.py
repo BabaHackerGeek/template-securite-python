@@ -4,7 +4,7 @@ from tp2.utils.binary import parse_binary
 from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
 from tp2.utils.metadata import get_file_metadata
-from tp2.utils.report import write_report, write_triage
+from tp2.utils.report import generate_pdf, write_report, write_triage
 from tp2.utils.triage import heuristic_triage
 from tp2.utils.yara_scan import yara_scan
 
@@ -33,5 +33,6 @@ def process_samples(samples_dir: str, rules_dir: str, out_dir: str) -> list:
         rapport = analyze_sample(path, rules_dir)
         chemins.append(write_report(rapport, out_dir))
         write_triage(rapport, out_dir, nom)
+        generate_pdf(rapport, os.path.join(out_dir, f"{nom}.pdf"))
         logger.info("Analysé : %s", nom)
     return chemins

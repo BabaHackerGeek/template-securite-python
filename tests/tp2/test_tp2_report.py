@@ -1,7 +1,15 @@
 import json
 from pathlib import Path
 
-from src.tp2.utils.report import generate_pdf, write_report, write_triage
+from fpdf import FPDF
+
+from src.tp2.utils.report import (
+    _section,
+    _texte,
+    generate_pdf,
+    write_report,
+    write_triage,
+)
 
 
 def test_write_report(tmp_path):
@@ -39,3 +47,17 @@ def test_generate_pdf(tmp_path):
     generate_pdf(rapport, str(chemin))
 
     assert chemin.read_bytes().startswith(b"%PDF")
+
+
+def test_texte_remplace_les_caracteres_hors_latin1():
+    assert _texte("café €") == "café ?"
+
+
+def test_section_avance_dans_la_page():
+    pdf = FPDF()
+    pdf.add_page()
+    position_avant = pdf.get_y()
+
+    _section(pdf, "Titre", ["une ligne"])
+
+    assert pdf.get_y() > position_avant
