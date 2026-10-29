@@ -1,22 +1,16 @@
-class Captcha:
-    def __init__(self, url):
-        self.url = url
-        self.image = ""
-        self.value = ""
+import platform
+from io import BytesIO
 
-    def solve(self):
-        """
-        Fonction permettant la résolution du captcha.
-        """
-        self.value = "FIXME"
+import pytesseract
+from PIL import Image
 
-    def capture(self):
-        """
-        Fonction permettant la capture du captcha.
-        """
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-    def get_value(self):
-        """
-        Fonction retournant la valeur du captcha
-        """
-        return self.value
+
+def solve_captcha(image_bytes: bytes) -> str:
+    """Prétraite l'image (niveaux de gris + seuil pour virer le bruit gris) puis lit le texte avec Tesseract."""
+    img = Image.open(BytesIO(image_bytes)).convert("L")
+    img = img.point(lambda p: 0 if p < 128 else 255)
+    text = pytesseract.image_to_string(img, config="--psm 7")
+    return text.strip()
