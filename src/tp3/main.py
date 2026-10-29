@@ -1,24 +1,22 @@
+import argparse
+
 from src.tp3.utils.config import logger
-from src.tp3.utils.session import Session
+from src.tp3.utils.network import breach_network
+from src.tp3.utils.web import breach_web
 
 
 def main():
-    logger.info("Starting TP3")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target", required=True)
+    args = parser.parse_args()
 
-    ip = "31.220.95.27:9002"
-    challenges = {"1": f"http://{ip}/captcha1/", "2": f"http://{ip}/captcha2/"}
+    logger.info(f"Lancement contre {args.target}")
 
-    for url in challenges.values ():
-        session = Session(url)
-        session.prepare_request()
-        session.submit_request()
+    host, port, key, flag1 = breach_web(args.target)
+    print(f"[+] FLAG1: {flag1}")
 
-        while not session.process_response():
-            session.prepare_request()
-            session.submit_request()
-
-        logger.info("Smell good !")
-        logger.info(f"Flag for {url} : {session.get_flag()}")
+    flag_final = breach_network(host, port, key)
+    print(f"[+] FLAG_FINAL: {flag_final}")
 
 
 if __name__ == "__main__":
