@@ -1,10 +1,14 @@
 import argparse
 
+from dotenv import load_dotenv
+
 from tp2.utils.analyzer import process_samples
 from tp2.utils.config import logger
 
 
 def main():
+    load_dotenv()
+    parser = argparse.ArgumentParser()
     parser = argparse.ArgumentParser()
     parser.add_argument("--samples", required=True)
     parser.add_argument("--rules", required=True)

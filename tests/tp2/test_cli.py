@@ -8,6 +8,8 @@ def test_main(tmp_path, monkeypatch):
     regles = tmp_path / "rules"
     regles.mkdir()
     out = tmp_path / "out"
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setattr("src.tp2.main.load_dotenv", lambda: None)
     monkeypatch.setattr(
         "sys.argv",
         ["tp2", "--samples", str(samples), "--rules", str(regles), "--out", str(out)],

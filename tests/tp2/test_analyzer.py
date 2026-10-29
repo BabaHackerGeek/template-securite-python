@@ -1,12 +1,13 @@
 from src.tp2.utils.analyzer import analyze_sample, process_samples
 
 
-def test_analyze_sample(tmp_path):
+def test_analyze_sample(tmp_path, monkeypatch):
     # Given : un fichier qui contient une URL
     fichier = tmp_path / "sample.bin"
     fichier.write_bytes(b"http://c2.example.test/gate.php")
     regles = tmp_path / "rules"
     regles.mkdir()
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
     # When : on analyse ce fichier
     rapport = analyze_sample(str(fichier), str(regles))
@@ -17,7 +18,7 @@ def test_analyze_sample(tmp_path):
     assert rapport["yara_matches"] == []
 
 
-def test_process_samples(tmp_path):
+def test_process_samples(tmp_path, monkeypatch):
     # Given : un dossier avec deux fichiers et un sous-dossier
     samples = tmp_path / "samples"
     samples.mkdir()
@@ -26,6 +27,7 @@ def test_process_samples(tmp_path):
     (samples / "dossier").mkdir()
     regles = tmp_path / "rules"
     regles.mkdir()
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
     # When : on traite le dossier
     chemins = process_samples(str(samples), str(regles), str(tmp_path / "out"))

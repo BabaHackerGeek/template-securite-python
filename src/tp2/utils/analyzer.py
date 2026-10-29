@@ -3,9 +3,9 @@ import os
 from tp2.utils.binary import parse_binary
 from tp2.utils.config import logger
 from tp2.utils.iocs import extract_flag, extract_iocs
+from tp2.utils.llm import llm_triage
 from tp2.utils.metadata import get_file_metadata
 from tp2.utils.report import generate_pdf, write_report, write_triage
-from tp2.utils.triage import heuristic_triage
 from tp2.utils.yara_scan import yara_scan
 
 
@@ -17,8 +17,7 @@ def analyze_sample(path: str, rules_dir: str) -> dict:
     rapport["iocs"] = extract_iocs(data)
     rapport["imports"] = parse_binary(path)["imports"]
     rapport["yara_matches"] = yara_scan(data, rules_dir)
-    rapport.update(heuristic_triage(rapport))
-    rapport["llm_summary"] = ""
+    rapport.update(llm_triage(rapport))
     rapport["flag"] = extract_flag(data.decode("latin-1"))
     return rapport
 
