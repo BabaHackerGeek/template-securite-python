@@ -82,3 +82,30 @@ par IP source et on garde celui envoyé par une IP détectée en injection SQL.
 - Le flag est choisi selon l'IP qui fait l'injection SQL : si le vrai flag
   venait d'un autre attaquant, il ne serait pas retrouvé.
 - Seul le HTTP en clair est analysé.
+
+## TP3 : exploit automatisé (fuzzing + CAPTCHA + réseau)
+
+Exploit qui enchaîne une phase web et une phase réseau contre la cible du TP3 pour récupérer deux drapeaux.
+
+Usage :
+
+\`\`\`bash
+poetry run python -m tp3.main --target http://localhost:8080
+\`\`\`
+
+### Phase web
+
+Fuzze les endpoints de la cible à partir d'une wordlist embarquée (`src/tp3/utils/wordlist.txt`)
+pour trouver la page cachée, résout le CAPTCHA (OCR via Tesseract, après un prétraitement en
+niveaux de gris et seuillage pour enlever le bruit), puis soumet la réponse pour récupérer le
+premier drapeau, l'adresse du service réseau et la clé d'encodage.
+
+### Phase réseau
+
+Se connecte au service TCP révélé, décode les jetons reçus (base64 puis XOR avec la clé) et
+répond dans le délai imparti (~5 secondes par round) jusqu'à récupérer le drapeau final.
+
+### Limites
+
+- La wordlist embarquée est générique ; un endpoint absent de cette liste ne sera pas trouvé.
+- Le délai de 5 secondes par round réseau est fixe, sans marge dynamique en cas de réseau lent.
