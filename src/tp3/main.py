@@ -1,6 +1,6 @@
 import argparse
 
-from src.tp3.utils.config import logger
+from src.tp3.utils.config import logger, output_logger
 from src.tp3.utils.network import breach_network
 from src.tp3.utils.web import breach_web
 
@@ -13,10 +13,10 @@ def main():
     logger.info(f"Lancement contre {args.target}")
 
     host, port, key, flag1 = breach_web(args.target)
-    print(f"[+] FLAG1: {flag1}")
+    output_logger.info(f"[+] FLAG1: {flag1}")
 
     flag_final = breach_network(host, port, key)
-    print(f"[+] FLAG_FINAL: {flag_final}")
+    output_logger.info(f"[+] FLAG_FINAL: {flag_final}")
 
 
 if __name__ == "__main__":
